@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CECE CELL — Aplikasi Toko</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@700;900&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --card: #1a1a26;
+    --border: #2a2a3a;
+    --gold: #f0a500;
+    --gold-light: #ffc93c;
+    --gold-dim: rgba(240,165,0,0.15);
+    --text: #e8e8f0;
+    --muted: #7a7a9a;
+    --green: #22c55e;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --wa: #25D366;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-shadow: 0 0 20px rgba(240,165,0,0.4);
+  }
+  .logo span { color: var(--text); font-weight: 700; }
+
+  /* ── NAV TABS ── */
+  nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav button {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: var(--muted);
+    padding: 12px 18px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+  }
+  nav button.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+  nav button:hover { color: var(--text); }
+
+  /* ── PAGES ── */
+  .page { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  /* ── SECTION TITLE ── */
+  .sec-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    color: var(--gold-light);
+  }
+
+  /* ── GRID ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media(max-width:480px){ .grid-2 { grid-template-columns: 1fr; } }
+
+  /* ── STAT BOX ── */
+  .stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-val {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--gold);
+  }
+  .stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 4px; letter-spacing: 1px; }
+
+  /* ── PRICE TABLE ── */
+  .category-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .cat-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--muted);
+    padding: 6px 14px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .cat-btn.active {
+    background: var(--gold-dim);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .price-list { display: flex; flex-direction: column; gap: 8px; }
+  .price-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: border-color 0.2s;
+  }
+  .price-item:hover { border-color: var(--gold); }
+  .price-item-name { font-size: 0.88rem; font-weight: 600; }
+  .price-item-detail { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+  .price-item-right { text-align: right; }
+  .price-val { font-family: 'Orbitron', monospace; font-size: 0.9rem; font-weight: 700; color: var(--gold); }
+  .price-margin { font-size: 0.68rem; color: var(--green); margin-top: 2px; }
+
+  .wa-order-btn {
+    margin-top: 6px;
+    background: var(--wa);
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .wa-order-btn:hover { opacity: 0.85; }
+
+  /* ── FORM ── */
+  .form-group { margin-bottom: 12px; }
+  label { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 6px; font-weight: 600; letter-spacing: 0.5px; }
+  input, select, textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 10px 12px;
+    font-size: 0.88rem;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--gold); }
+  select option { background: var(--surface); }
+
+  .btn {
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+  }
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: #0a0a0f;
+  }
+  .btn-gold:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-wa {
+    background: var(--wa);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .btn-wa:hover { opacity: 0.9; }
+
+  /* ── TRANSAKSI RESULT ── */
+  .trx-result {
+    background: var(--gold-dim);
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 14px;
+    display: none;
+  }
+  .trx-result.show { display: block; }
+  .trx-row { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; }
+  .trx-row.total { font-weight: 700; font-size: 1rem; color: var(--gold); border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px; }
+
+  /* ── HISTORY TABLE ── */
+  .history-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .history-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+  }
+  .badge-pulsa { background: rgba(59,130,246,0.2); color: #3b82f6; }
+  .badge-token { background: rgba(240,165,0,0.2); color: var(--gold); }
+  .badge-data { background: rgba(34,197,94,0.2); color: var(--green); }
+
+  /* ── STOK ── */
+  .stok-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .stok-bar-wrap { flex: 1; }
+  .stok-bar-bg { background: var(--border); border-radius: 4px; height: 6px; }
+  .stok-bar { height: 6px; border-radius: 4px; transition: width 0.4s; }
+  .stok-num { font-family: 'Orbitron', monospace; font-size: 0.85rem; font-weight: 700; color: var(--gold); min-width: 40px; text-align: right; }
+
+  /* ── PROFIL ── */
+  .profil-header {
+    background: linear-gradient(135deg, var(--card), #1e1e2e);
+    border: 1px solid var(--gold);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .profil-header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(240,165,0,0.15), transparent);
+    border-radius: 50%;
+  }
+  .shop-icon { font-size: 3rem; margin-bottom: 8px; }
+  .shop-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-shadow: 0 0 30px rgba(240,165,0,0.5);
+  }
+  .shop-tagline { color: var(--muted); font-size: 0.8rem; margin-top: 4px; }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    font-size: 0.87rem;
+  }
+  .info-icon { font-size: 1.1rem; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--gold);
+    color: #0a0a0f;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 10px 20px;
+    border-radius: 24px;
+    z-index: 9999;
+    transition: transform 0.3s;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  .empty { text-align: center; color: var(--muted); padding: 30px 0; font-size: 0.85rem; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">CECE<span>CELL</span></div>
+  <div style="font-size:0.72rem;color:var(--muted);">📍 Toko Anda</div>
+</header>
+
+<nav>
+  <button class="active" onclick="switchTab('beranda')">🏠 Beranda</button>
+  <button onclick="switchTab('harga')">💰 Harga</button>
+  <button onclick="switchTab('kasir')">🧾 Kasir</button>
+  <button onclick="switchTab('riwayat')">📋 Riwayat</button>
+  <button onclick="switchTab('stok')">📦 Stok</button>
+  <button onclick="switchTab('profil')">🏪 Profil</button>
+</nav>
+
+<!-- ══ BERANDA ══ -->
+<div id="page-beranda" class="page active">
+  <div class="sec-title">Dashboard</div>
+
+  <div class="grid-2" id="stat-boxes">
+    <div class="stat">
+      <div class="stat-val" id="stat-hari">Rp 0</div>
+      <div class="stat-label">OMSET HARI INI</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stat-trx">0</div>
+      <div class="stat-label">TRANSAKSI HARI INI</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stat-bulan">Rp 0</div>
+      <div class="stat-label">OMSET BULAN INI</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stat-profit">Rp 0</div>
+      <div class="stat-label">ESTIMASI PROFIT</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:4px;">
+    <div class="card-title">⚡ Transaksi Terbaru</div>
+    <div id="recent-trx"><div class="empty">Belum ada transaksi hari ini</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📲 Hubungi via WhatsApp</div>
+    <p style="font-size:0.83rem;color:var(--muted);margin-bottom:12px;">Kirim broadcast promosi atau balas pertanyaan pelanggan langsung.</p>
+    <button class="btn btn-wa" onclick="openWA('', true)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Buka WhatsApp Toko
+    </button>
+  </div>
+</div>
+
+<!-- ══ HARGA ══ -->
+<div id="page-harga" class="page">
+  <div class="sec-title">Daftar Harga</div>
+
+  <div class="category-tabs">
+    <button class="cat-btn active" onclick="filterCat('semua',this)">Semua</button>
+    <button class="cat-btn" onclick="filterCat('pulsa',this)">Pulsa</button>
+    <button class="cat-btn" onclick="filterCat('token',this)">Token PLN</button>
+    <button class="cat-btn" onclick="filterCat('data',this)">Paket Data</button>
+    <button class="cat-btn" onclick="filterCat('emoney',this)">E-Money</button>
+  </div>
+
+  <div class="price-list" id="price-list"></div>
+</div>
+
+<!-- ══ KASIR ══ -->
+<div id="page-kasir" class="page">
+  <div class="sec-title">Input Transaksi</div>
+
+  <div class="card">
+    <div class="form-group">
+      <label>KATEGORI PRODUK</label>
+      <select id="k-kategori" onchange="updateProduk()">
+        <option value="">-- Pilih Kategori --</option>
+        <option value="pulsa">Pulsa</option>
+        <option value="token">Token PLN</option>
+        <option value="data">Paket Data</option>
+        <option value="emoney">E-Money</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>PRODUK</label>
+      <select id="k-produk" onchange="updateHarga()">
+        <option value="">-- Pilih Produk --</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>NO. HP / ID PELANGGAN</label>
+      <input type="tel" id="k-nohp" placeholder="08xxxxxxxxxx">
+    </div>
+    <div class="form-group">
+      <label>NAMA PELANGGAN (opsional)</label>
+      <input type="text" id="k-nama" placeholder="Nama pelanggan...">
+    </div>
+
+    <div class="trx-result" id="trx-preview">
+      <div class="trx-row"><span>Produk</span><span id="prev-produk">-</span></div>
+      <div class="trx-row"><span>Harga Jual</span><span id="prev-harga">-</span></div>
+      <div class="trx-row"><span>Modal</span><span id="prev-modal">-</span></div>
+      <div class="trx-row total"><span>PROFIT</span><span id="prev-profit">-</span></div>
+    </div>
+
+    <button class="btn btn-gold" style="margin-top:14px;" onclick="prosesTransaksi()">✅ Proses Transaksi</button>
+    <button class="btn btn-wa" onclick="kirimWATransaksi()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Kirim Struk via WhatsApp
+    </button>
+  </div>
+</div>
+
+<!-- ══ RIWAYAT ══ -->
+<div id="page-riwayat" class="page">
+  <div class="sec-title">Riwayat Transaksi</div>
+  <div id="riwayat-list"><div class="empty">Belum ada transaksi</div></div>
+</div>
+
+<!-- ══ STOK ══ -->
+<div id="page-stok" class="page">
+  <div class="sec-title">Saldo & Stok</div>
+  <div class="card">
+    <div class="card-title">💳 Saldo Deposit</div>
+    <div style="text-align:center;padding:10px 0;">
+      <div style="font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;color:var(--gold);" id="saldo-val">Rp 500.000</div>
+      <div style="color:var(--muted);font-size:0.75rem;margin-top:4px;">Saldo aktif untuk transaksi</div>
+    </div>
+    <div class="form-group" style="margin-top:12px;">
+      <label>TAMBAH SALDO</label>
+      <input type="number" id="tambah-saldo" placeholder="Jumlah deposit...">
+    </div>
+    <button class="btn btn-gold" onclick="tambahSaldo()">+ Tambah Saldo</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 Stok Fisik</div>
+    <div id="stok-list"></div>
+  </div>
+</div>
+
+<!-- ══ PROFIL ══ -->
+<div id="page-profil" class="page">
+  <div class="profil-header">
+    <div class="shop-icon">📱</div>
+    <div class="shop-name">CECE CELL</div>
+    <div class="shop-tagline">Pulsa • Token PLN • Paket Data • E-Money</div>
+  </div>
+
+  <div class="info-row"><span class="info-icon">📍</span><span id="p-alamat">Jl. Contoh No. 1, Kota Anda</span></div>
+  <div class="info-row"><span class="info-icon">📞</span><span id="p-telp">0812-xxxx-xxxx</span></div>
+  <div class="info-row"><span class="info-icon">🕐</span><span>Buka: 07.00 – 21.00 (Setiap Hari)</span></div>
+
+  <div class="card" style="margin-top:8px;">
+    <div class="card-title">⚙️ Pengaturan Toko</div>
+    <div class="form-group">
+      <label>NAMA TOKO</label>
+      <input type="text" id="set-nama" value="CECE CELL">
+    </div>
+    <div class="form-group">
+      <label>NO. WHATSAPP</label>
+      <input type="tel" id="set-wa" placeholder="628xxxxxxxxxx (tanpa +)">
+    </div>
+    <div class="form-group">
+      <label>ALAMAT</label>
+      <input type="text" id="set-alamat" placeholder="Alamat toko...">
+    </div>
+    <button class="btn btn-gold" onclick="simpanProfil()">💾 Simpan Pengaturan</button>
+    <button class="btn btn-wa" style="margin-top:8px;" onclick="openWA('Halo! Saya ingin bertanya tentang produk CECE CELL 😊')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Test Tombol WhatsApp
+    </button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ Berhasil!</div>
+
+<script>
+// ══ DATA PRODUK ══
+const produkDB = {
+  pulsa: [
+    {nama:'Pulsa 5.000', operator:'Semua Operator', harga:6500, modal:5500},
+    {nama:'Pulsa 10.000', operator:'Semua Operator', harga:11500, modal:10200},
+    {nama:'Pulsa 15.000', operator:'Semua Operator', harga:16500, modal:15000},
+    {nama:'Pulsa 20.000', operator:'Semua Operator', harga:21500, modal:19800},
+    {nama:'Pulsa 25.000', operator:'Semua Operator', harga:26500, modal:24800},
+    {nama:'Pulsa 50.000', operator:'Semua Operator', harga:51500, modal:49500},
+    {nama:'Pulsa 100.000', operator:'Semua Operator', harga:101500, modal:99000},
+  ],
+  token: [
+    {nama:'Token PLN 20.000', operator:'PLN', harga:21500, modal:20500},
+    {nama:'Token PLN 50.000', operator:'PLN', harga:51500, modal:50500},
+    {nama:'Token PLN 100.000', operator:'PLN', harga:102000, modal:100500},
+    {nama:'Token PLN 200.000', operator:'PLN', harga:202000, modal:200500},
+    {nama:'Token PLN 500.000', operator:'PLN', harga:502000, modal:500500},
+    {nama:'Token PLN 1.000.000', operator:'PLN', harga:1002000, modal:1000500},
+  ],
+  data: [
+    {nama:'Paket 1GB / 7 Hari', operator:'Telkomsel', harga:13000, modal:11500},
+    {nama:'Paket 2GB / 30 Hari', operator:'Telkomsel', harga:22000, modal:19500},
+    {nama:'Paket 5GB / 30 Hari', operator:'Telkomsel', harga:45000, modal:41000},
+    {nama:'Paket 10GB / 30 Hari', operator:'Indosat', harga:35000, modal:31000},
+    {nama:'Paket 20GB / 30 Hari', operator:'XL', harga:55000, modal:50000},
+    {nama:'Paket 30GB / 30 Hari', operator:'Tri', harga:65000, modal:59000},
+    {nama:'Unlimited 30 Hari', operator:'Telkomsel', harga:120000, modal:110000},
+  ],
+  emoney: [
+    {nama:'Top Up GoPay 50.000', operator:'GoPay', harga:51500, modal:50500},
+    {nama:'Top Up GoPay 100.000', operator:'GoPay', harga:102000, modal:100500},
+    {nama:'Top Up OVO 50.000', operator:'OVO', harga:51500, modal:50500},
+    {nama:'Top Up OVO 100.000', operator:'OVO', harga:102000, modal:100500},
+    {nama:'Top Up DANA 50.000', operator:'DANA', harga:51500, modal:50500},
+    {nama:'Top Up ShopeePay 100.000', operator:'ShopeePay', harga:102000, modal:100500},
+  ]
+};
+
+const badgeClass = {pulsa:'badge-pulsa', token:'badge-token', data:'badge-data', emoney:'badge-pulsa'};
+const catLabel = {pulsa:'Pulsa', token:'Token PLN', data:'Paket Data', emoney:'E-Money'};
+
+// ══ STATE ══
+let riwayat = JSON.parse(localStorage.getItem('cc_riwayat') || '[]');
+let saldo = parseInt(localStorage.getItem('cc_saldo') || '500000');
+let profil = JSON.parse(localStorage.getItem('cc_profil') || '{"nama":"CECE CELL","wa":"","alamat":"Jl. Contoh No. 1, Kota Anda"}');
+let currentCat = 'semua';
+let selectedProduk = null;
+
+function save() {
+  localStorage.setItem('cc_riwayat', JSON.stringify(riwayat));
+  localStorage.setItem('cc_saldo', saldo);
+  localStorage.setItem('cc_profil', JSON.stringify(profil));
+}
+
+function fmt(n) { return 'Rp ' + n.toLocaleString('id-ID'); }
+
+// ══ TAB ══
+function switchTab(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  const btns = document.querySelectorAll('nav button');
+  const tabMap = ['beranda','harga','kasir','riwayat','stok','profil'];
+  btns[tabMap.indexOf(id)].classList.add('active');
+  if(id==='harga') renderHarga();
+  if(id==='riwayat') renderRiwayat();
+  if(id==='stok') renderStok();
+  if(id==='beranda') renderBeranda();
+  if(id==='profil') loadProfil();
+}
+
+// ══ HARGA ══
+function filterCat(cat, el) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderHarga();
+}
+
+function renderHarga() {
+  const list = document.getElementById('price-list');
+  let html = '';
+  const cats = currentCat === 'semua' ? Object.keys(produkDB) : [currentCat];
+  cats.forEach(cat => {
+    produkDB[cat].forEach(p => {
+      const profit = p.harga - p.modal;
+      html += `<div class="price-item">
+        <div>
+          <div class="price-item-name">${p.nama}</div>
+          <div class="price-item-detail">${p.operator} · <span class="history-badge ${badgeClass[cat]}">${catLabel[cat]}</span></div>
+          <button class="wa-order-btn" onclick="orderWA('${p.nama}','${fmt(p.harga)}')">📲 Order WA</button>
+        </div>
+        <div class="price-item-right">
+          <div class="price-val">${fmt(p.harga)}</div>
+          <div class="price-margin">+${fmt(profit)} profit</div>
+        </div>
+      </div>`;
+    });
+  });
+  list.innerHTML = html || '<div class="empty">Tidak ada produk</div>';
+}
+
+function orderWA(nama, harga) {
+  const msg = `Halo CECE CELL! 👋\nSaya ingin order:\n\n📦 *${nama}*\n💰 Harga: ${harga}\n\nMohon dikonfirmasi ya. Terima kasih! 🙏`;
+  openWA(msg);
+}
+
+// ══ KASIR ══
+function updateProduk() {
+  const kat = document.getElementById('k-kategori').value;
+  const sel = document.getElementById('k-produk');
+  sel.innerHTML = '<option value="">-- Pilih Produk --</option>';
+  document.getElementById('trx-preview').classList.remove('show');
+  selectedProduk = null;
+  if (!kat) return;
+  produkDB[kat].forEach((p,i) => {
+    sel.innerHTML += `<option value="${kat}_${i}">${p.nama} — ${fmt(p.harga)}</option>`;
+  });
+}
+
+function updateHarga() {
+  const val = document.getElementById('k-produk').value;
+  if (!val) { document.getElementById('trx-preview').classList.remove('show'); return; }
+  const [cat, idx] = val.split('_');
+  selectedProduk = {...produkDB[cat][idx], cat};
+  const profit = selectedProduk.harga - selectedProduk.modal;
+  document.getElementById('prev-produk').textContent = selectedProduk.nama;
+  document.getElementById('prev-harga').textContent = fmt(selectedProduk.harga);
+  document.getElementById('prev-modal').textContent = fmt(selectedProduk.modal);
+  document.getElementById('prev-profit').textContent = fmt(profit);
+  document.getElementById('trx-preview').classList.add('show');
+}
+
+function prosesTransaksi() {
+  if (!selectedProduk) { showToast('⚠️ Pilih produk dulu!'); return; }
+  const nohp = document.getElementById('k-nohp').value.trim();
+  if (!nohp) { showToast('⚠️ Masukkan no. HP!'); return; }
+  const nama = document.getElementById('k-nama').value.trim() || 'Pelanggan';
+  const trx = {
+    id: Date.now(),
+    waktu: new Date().toLocaleString('id-ID'),
+    nama, nohp,
+    produk: selectedProduk.nama,
+    cat: selectedProduk.cat,
+    harga: selectedProduk.harga,
+    modal: selectedProduk.modal,
+    profit: selectedProduk.harga - selectedProduk.modal,
+    tanggal: new Date().toDateString()
+  };
+  riwayat.unshift(trx);
+  save();
+  showToast('✅ Transaksi berhasil!');
+  document.getElementById('k-nohp').value = '';
+  document.getElementById('k-nama').value = '';
+  document.getElementById('k-produk').value = '';
+  document.getElementById('k-kategori').value = '';
+  document.getElementById('trx-preview').classList.remove('show');
+  selectedProduk = null;
+}
+
+function kirimWATransaksi() {
+  if (!selectedProduk) { showToast('⚠️ Pilih produk dulu!'); return; }
+  const nohp = document.getElementById('k-nohp').value.trim();
+  const nama = document.getElementById('k-nama').value.trim() || 'Pelanggan';
+  const msg = `🧾 *STRUK TRANSAKSI*\n*CECE CELL*\n——————————\n👤 Nama: ${nama}\n📱 No. HP: ${nohp}\n📦 Produk: ${selectedProduk.nama}\n💰 Harga: ${fmt(selectedProduk.harga)}\n⏰ Waktu: ${new Date().toLocaleString('id-ID')}\n——————————\nTerima kasih sudah berbelanja di CECE CELL! 🙏`;
+  openWA(msg);
+}
+
+// ══ RIWAYAT ══
+function renderRiwayat() {
+  const el = document.getElementById('riwayat-list');
+  if (!riwayat.length) { el.innerHTML = '<div class="empty">Belum ada transaksi</div>'; return; }
+  el.innerHTML = riwayat.map(t => `
+    <div class="history-item">
+      <div>
+        <div style="font-size:0.85rem;font-weight:600;">${t.produk}</div>
+        <div style="font-size:0.72rem;color:var(--muted);">${t.nama} · ${t.nohp}</div>
+        <div style="font-size:0.68rem;color:var(--muted);margin-top:2px;">${t.waktu}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'Orbitron',monospace;font-size:0.88rem;color:var(--gold);">${fmt(t.harga)}</div>
+        <div style="font-size:0.7rem;color:var(--green);">+${fmt(t.profit)}</div>
+        <span class="history-badge ${badgeClass[t.cat]}">${catLabel[t.cat]}</span>
+      </div>
+    </div>`).join('');
+}
+
+// ══ BERANDA ══
+function renderBeranda() {
+  const today = new Date().toDateString();
+  const bulanIni = new Date().toISOString().slice(0,7);
+  const todayTrx = riwayat.filter(t => t.tanggal === today);
+  const bulanTrx = riwayat.filter(t => new Date(t.id).toISOString().slice(0,7) === bulanIni);
+  const omsetHari = todayTrx.reduce((s,t)=>s+t.harga,0);
+  const omsetBulan = bulanTrx.reduce((s,t)=>s+t.harga,0);
+  const profit = todayTrx.reduce((s,t)=>s+t.profit,0);
+  document.getElementById('stat-hari').textContent = fmt(omsetHari);
+  document.getElementById('stat-trx').textContent = todayTrx.length;
+  document.getElementById('stat-bulan').textContent = fmt(omsetBulan);
+  document.getElementById('stat-profit').textContent = fmt(profit);
+  const rec = document.getElementById('recent-trx');
+  if (!todayTrx.length) { rec.innerHTML='<div class="empty">Belum ada transaksi hari ini</div>'; return; }
+  rec.innerHTML = todayTrx.slice(0,5).map(t=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+      <div><div style="font-size:0.83rem;font-weight:600;">${t.produk}</div><div style="font-size:0.7rem;color:var(--muted);">${t.nama}</div></div>
+      <div style="font-family:'Orbitron',monospace;font-size:0.82rem;color:var(--gold);">${fmt(t.harga)}</div>
+    </div>`).join('');
+}
+
+// ══ STOK ══
+const stokData = [
+  {nama:'Deposit Pulsa', total:100, used:0, color:'#3b82f6'},
+  {nama:'Deposit Token PLN', total:100, used:0, color:'#f0a500'},
+  {nama:'Deposit Paket Data', total:100, used:0, color:'#22c55e'},
+  {nama:'Deposit E-Money', total:100, used:0, color:'#a855f7'},
+];
+
+function renderStok() {
+  const todayTrx = riwayat;
+  stokData.forEach(s => {
+    s.used = todayTrx.filter(t=>t.cat===s.nama.toLowerCase().split(' ')[1]).length;
+  });
+  document.getElementById('saldo-val').textContent = fmt(saldo);
+  document.getElementById('stok-list').innerHTML = stokData.map(s => {
+    const pct = Math.min(100, Math.round((s.used/s.total)*100));
+    return `<div class="stok-item">
+      <div style="flex:1">
+        <div style="font-size:0.83rem;font-weight:600;margin-bottom:6px;">${s.nama}</div>
+        <div class="stok-bar-bg"><div class="stok-bar" style="width:${pct}%;background:${s.color};"></div></div>
+      </div>
+      <div class="stok-num">${s.used}</div>
+    </div>`;
+  }).join('');
+}
+
+function tambahSaldo() {
+  const val = parseInt(document.getElementById('tambah-saldo').value);
+  if (!val || val <= 0) { showToast('⚠️ Masukkan jumlah saldo'); return; }
+  saldo += val;
+  save();
+  renderStok();
+  document.getElementById('tambah-saldo').value = '';
+  showToast('✅ Saldo berhasil ditambahkan!');
+}
+
+// ══ PROFIL ══
+function loadProfil() {
+  document.getElementById('set-nama').value = profil.nama || 'CECE CELL';
+  document.getElementById('set-wa').value = profil.wa || '';
+  document.getElementById('set-alamat').value = profil.alamat || '';
+  document.getElementById('p-alamat').textContent = profil.alamat || 'Jl. Contoh No. 1, Kota Anda';
+  document.getElementById('p-telp').textContent = profil.wa ? '0'+profil.wa.slice(2) : '0812-xxxx-xxxx';
+}
+
+function simpanProfil() {
+  profil.nama = document.getElementById('set-nama').value;
+  profil.wa = document.getElementById('set-wa').value;
+  profil.alamat = document.getElementById('set-alamat').value;
+  save();
+  loadProfil();
+  showToast('✅ Pengaturan tersimpan!');
+}
+
+// ══ WHATSAPP ══
+function openWA(msg, noNumber) {
+  const wa = profil.wa || '6281200000000';
+  const url = noNumber
+    ? `https://wa.me/${wa}`
+    : `https://wa.me/${wa}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+
+// ══ TOAST ══
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ══ INIT ══
+renderBeranda();
+</script>
+</body>
+</html>
