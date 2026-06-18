@@ -358,7 +358,7 @@
 
 <header>
   <div class="logo">CECE<span>CELL</span></div>
-  <div style="font-size:0.72rem;color:var(--muted);">📍 Toko Anda</div>
+  <div style="font-size:0.72rem;color:var(--muted);">📍 Griya Bina Mitra 1 Blok E No.2</div>
 </header>
 
 <nav>
@@ -504,8 +504,9 @@
     <div class="shop-tagline">Pulsa • Token PLN • Paket Data • E-Money</div>
   </div>
 
-  <div class="info-row"><span class="info-icon">📍</span><span id="p-alamat">Jl. Contoh No. 1, Kota Anda</span></div>
-  <div class="info-row"><span class="info-icon">📞</span><span id="p-telp">0812-xxxx-xxxx</span></div>
+  <div class="info-row"><span class="info-icon">📍</span><span id="p-alamat">Perumahan Griya Bina Mitra 1 Blok E No.2</span></div>
+  <div class="info-row"><span class="info-icon">📞</span><span id="p-telp">089684438184</span></div>
+  <div class="info-row"><span class="info-icon">💬</span><a href="https://wa.me/6289684438184" target="_blank" style="color:var(--wa);text-decoration:none;font-weight:600;">Chat WhatsApp: 089684438184</a></div>
   <div class="info-row"><span class="info-icon">🕐</span><span>Buka: 07.00 – 21.00 (Setiap Hari)</span></div>
 
   <div class="card" style="margin-top:8px;">
@@ -516,11 +517,11 @@
     </div>
     <div class="form-group">
       <label>NO. WHATSAPP</label>
-      <input type="tel" id="set-wa" placeholder="628xxxxxxxxxx (tanpa +)">
+      <input type="tel" id="set-wa" value="6289684438184" placeholder="628xxxxxxxxxx (tanpa +)">
     </div>
     <div class="form-group">
       <label>ALAMAT</label>
-      <input type="text" id="set-alamat" placeholder="Alamat toko...">
+      <input type="text" id="set-alamat" value="Perumahan Griya Bina Mitra 1 Blok E No.2" placeholder="Alamat toko...">
     </div>
     <button class="btn btn-gold" onclick="simpanProfil()">💾 Simpan Pengaturan</button>
     <button class="btn btn-wa" style="margin-top:8px;" onclick="openWA('Halo! Saya ingin bertanya tentang produk CECE CELL 😊')">
@@ -578,7 +579,7 @@ const catLabel = {pulsa:'Pulsa', token:'Token PLN', data:'Paket Data', emoney:'E
 // ══ STATE ══
 let riwayat = JSON.parse(localStorage.getItem('cc_riwayat') || '[]');
 let saldo = parseInt(localStorage.getItem('cc_saldo') || '500000');
-let profil = JSON.parse(localStorage.getItem('cc_profil') || '{"nama":"CECE CELL","wa":"","alamat":"Jl. Contoh No. 1, Kota Anda"}');
+let profil = JSON.parse(localStorage.getItem('cc_profil') || '{"nama":"CECE CELL","wa":"6289684438184","alamat":"Perumahan Griya Bina Mitra 1 Blok E No.2"}');
 let currentCat = 'semua';
 let selectedProduk = null;
 
@@ -782,10 +783,10 @@ function tambahSaldo() {
 // ══ PROFIL ══
 function loadProfil() {
   document.getElementById('set-nama').value = profil.nama || 'CECE CELL';
-  document.getElementById('set-wa').value = profil.wa || '';
-  document.getElementById('set-alamat').value = profil.alamat || '';
-  document.getElementById('p-alamat').textContent = profil.alamat || 'Jl. Contoh No. 1, Kota Anda';
-  document.getElementById('p-telp').textContent = profil.wa ? '0'+profil.wa.slice(2) : '0812-xxxx-xxxx';
+  document.getElementById('set-wa').value = profil.wa || '6289684438184';
+  document.getElementById('set-alamat').value = profil.alamat || 'Perumahan Griya Bina Mitra 1 Blok E No.2';
+  document.getElementById('p-alamat').textContent = profil.alamat || 'Perumahan Griya Bina Mitra 1 Blok E No.2';
+  document.getElementById('p-telp').textContent = profil.wa ? '0'+profil.wa.slice(2) : '089684438184';
 }
 
 function simpanProfil() {
@@ -799,7 +800,7 @@ function simpanProfil() {
 
 // ══ WHATSAPP ══
 function openWA(msg, noNumber) {
-  const wa = profil.wa || '6281200000000';
+  const wa = profil.wa || '6289684438184';
   const url = noNumber
     ? `https://wa.me/${wa}`
     : `https://wa.me/${wa}?text=${encodeURIComponent(msg)}`;
